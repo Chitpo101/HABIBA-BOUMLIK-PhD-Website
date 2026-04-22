@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,10 +18,13 @@
     --text-dark: #0f1b2d;
     --text-mid: #3a4a5c;
     --text-muted: #6b7c8f;
+    --sidebar-w: 280px;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   html { scroll-behavior: smooth; }
+
   body {
     font-family: 'Jost', sans-serif;
     font-weight: 300;
@@ -31,20 +33,28 @@
     min-height: 100vh;
   }
 
-  /* Navigation */
+  /* ── DESKTOP: SIDEBAR hidden, TOP NAV shown ── */
+  .sidebar { display: none; }
+
+  /* ── TOP NAV (desktop only) ── */
   .topnav {
     background: var(--navy-mid);
     border-bottom: 1px solid rgba(201,168,76,0.18);
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 0;
     position: sticky;
     top: 0;
     z-index: 100;
   }
+
   .topnav a {
     display: inline-flex;
+    align-items: center;
     padding: 16px 28px;
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
     font-size: 0.72rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -52,115 +62,979 @@
     text-decoration: none;
     transition: all 0.22s ease;
     border-bottom: 2px solid transparent;
-  }
-  .topnav a:hover, .topnav a.active {
-    color: var(--gold-light);
-    background: rgba(201,168,76,0.05);
-    border-bottom-color: var(--gold);
+    position: relative;
   }
 
-  /* Hero */
+  .topnav a:hover {
+    color: var(--gold-light);
+    background: rgba(201,168,76,0.05);
+  }
+
+  .topnav a.active {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold);
+    background: rgba(201,168,76,0.07);
+  }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
   .hero {
     position: relative;
-    height: 220px;
+    height: 190px;
     background: linear-gradient(135deg, #0f1b2d 0%, #1a2d47 40%, #243d5c 70%, #2d5070 100%);
     display: flex;
     align-items: flex-end;
-    padding: 0 64px 40px;
+    padding: 0 64px 32px;
     overflow: hidden;
   }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 80% at 80% 50%, rgba(201,168,76,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(201,168,76,0.05) 0%, transparent 60%);
+  }
+
+  .hero-lines {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 59px,
+        rgba(201,168,76,0.04) 59px,
+        rgba(201,168,76,0.04) 60px
+      );
+  }
+
+  .hero-content { position: relative; z-index: 1; }
+
   .hero-eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
     font-size: 0.68rem;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--gold);
     margin-bottom: 12px;
   }
+
   .hero-name {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 3.5rem;
+    font-size: 3.8rem;
     font-weight: 300;
     font-style: italic;
     color: #fff;
     line-height: 1.0;
+    letter-spacing: -0.01em;
   }
-  .hero-name strong { font-style: normal; font-weight: 600; }
 
-  /* Content */
-  .page { padding: 64px; max-width: 1200px; margin: 0 auto; }
-  .section-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
-  .section-title { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; color: var(--navy); margin-bottom: 32px; }
-  .gold-rule { width: 48px; height: 1px; background: var(--gold); margin-bottom: 48px; }
+  .hero-name strong {
+    font-style: normal;
+    font-weight: 600;
+  }
 
-  /* Layout Grids */
-  .about-grid { display: grid; grid-template-columns: 320px 1fr; gap: 64px; align-items: start; }
-  .img-frame { width: 100%; border: 1px solid rgba(201,168,76,0.2); box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
-  
-  .about-bio p { font-size: 1.05rem; line-height: 1.8; color: var(--text-mid); margin-bottom: 24px; }
-  
-  .activity-card { display: grid; grid-template-columns: 1fr 400px; gap: 64px; padding: 64px 0; border-bottom: 1px solid rgba(15,27,45,0.08); align-items: center; }
-  .activity-card:nth-child(even) { grid-template-columns: 400px 1fr; }
+  /* ── PAGE SECTIONS ── */
+  .page { display: none; padding: 64px; animation: fadeIn 0.4s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  /* ── SECTION TITLES ── */
+  .section-label {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 300;
+    color: var(--navy);
+    line-height: 1.1;
+    margin-bottom: 32px;
+  }
+
+  .gold-rule {
+    width: 48px;
+    height: 1px;
+    background: var(--gold);
+    margin-bottom: 32px;
+  }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 64px;
+    margin-bottom: 56px;
+  }
+
+  .about-photo {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    filter: grayscale(15%) contrast(1.05);
+    border: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .about-photo-placeholder {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: linear-gradient(135deg, var(--navy-mid), var(--navy-light));
+    border: 1px solid rgba(201,168,76,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: rgba(201,168,76,0.4);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    gap: 12px;
+  }
+
+  .cv-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 10px 22px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .cv-btn:hover { background: var(--gold); color: var(--navy); }
+
+  .about-bio p {
+    font-size: 1.0rem;
+    line-height: 1.85;
+    color: var(--text-mid);
+    margin-bottom: 18px;
+    font-weight: 300;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    padding-top: 48px;
+    border-top: 1px solid rgba(15,27,45,0.1);
+  }
+
+  .col-title {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+
+  .research-item {
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(15,27,45,0.08);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .edu-item { margin-bottom: 22px; }
+  .edu-year { font-size: 0.68rem; letter-spacing: 0.15em; color: var(--gold); font-weight: 400; margin-bottom: 3px; }
+  .edu-degree {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 1.0rem;
+    color: var(--navy);
+    margin-bottom: 2px;
+  }
+  .edu-inst { font-size: 0.8rem; color: var(--text-muted); font-weight: 300; }
+
+  /* ── TEACHING ── */
+  .teaching-body {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .philosophy-text p {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--text-mid);
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+
+  .teaching-img {
+    width: 100%;
+    aspect-ratio: 16/10;
+    background: linear-gradient(135deg, var(--navy-mid), var(--navy-light));
+    border: 1px solid rgba(201,168,76,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(201,168,76,0.3);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+
+  .pullquote {
+    margin: 32px 0;
+    padding: 24px 32px;
+    border-left: 3px solid var(--gold);
+    background: var(--gold-pale);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--navy);
+    line-height: 1.7;
+  }
+
+  /* ── PUBLICATIONS ── */
+  .pub-list { list-style: none; }
+
+  .pub-item {
+    padding: 22px 0;
+    border-bottom: 1px solid rgba(15,27,45,0.08);
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 16px;
+    align-items: start;
+    transition: background 0.2s;
+  }
+
+  .pub-item:hover { background: rgba(201,168,76,0.03); margin: 0 -16px; padding-left: 16px; padding-right: 16px; }
+
+  .pub-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--gold);
+    padding-top: 2px;
+  }
+
+  .pub-text {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text-mid);
+    font-weight: 300;
+  }
+
+  .pub-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.0rem;
+    color: var(--navy);
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 400;
+  }
+
+  /* ── PRESENTATIONS ── */
+  .pres-photo-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .pres-photo {
+    aspect-ratio: 4/3;
+    background: linear-gradient(135deg, var(--navy-mid), var(--navy-light));
+    border: 1px solid rgba(201,168,76,0.15);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(201,168,76,0.25);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.8rem;
+  }
+
+  .pres-category {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 36px 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .pres-list { list-style: none; }
+
+  .pres-item {
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(15,27,45,0.07);
+    font-size: 0.87rem;
+    line-height: 1.65;
+    color: var(--text-mid);
+    font-weight: 300;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .pres-item::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 0.7rem;
+  }
+
+  .pres-item em {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--navy);
+    font-size: 0.95rem;
+  }
+
+  /* ── ACTIVITIES ── */
+  .activity-card {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 40px;
+    padding: 40px 0;
+    border-bottom: 1px solid rgba(15,27,45,0.09);
+    align-items: start;
+  }
+
+  .activity-card:nth-child(even) {
+    grid-template-columns: 320px 1fr;
+  }
+
   .activity-card:nth-child(even) .activity-text { order: 2; }
-  
-  .activity-title { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--navy); margin-bottom: 16px; }
-  .activity-text p { font-size: 0.95rem; line-height: 1.7; color: var(--text-mid); }
+  .activity-card:nth-child(even) .activity-img { order: 1; }
 
-  footer { padding: 48px 64px; border-top: 1px solid rgba(15,27,45,0.08); display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); }
+  .activity-img {
+    aspect-ratio: 4/3;
+    background: linear-gradient(135deg, var(--navy-mid), var(--navy-light));
+    border: 1px solid rgba(201,168,76,0.15);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(201,168,76,0.25);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.8rem;
+  }
+
+  .activity-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.45rem;
+    font-weight: 400;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+
+  .activity-text p {
+    font-size: 0.88rem;
+    line-height: 1.78;
+    color: var(--text-mid);
+    margin-bottom: 12px;
+    font-weight: 300;
+  }
+
+  .activity-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 400;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .activity-link:hover { border-bottom-color: var(--gold); }
+
+  /* ── NYFAF ── */
+  .nyfaf-hero {
+    background: var(--navy);
+    padding: 48px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 48px;
+    align-items: center;
+    margin-bottom: 0;
+    border: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .nyfaf-logo-placeholder {
+    aspect-ratio: 1;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.2);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .nyfaf-logo-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+
+  .nyfaf-logo-sub {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(201,168,76,0.6);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .nyfaf-info p {
+    font-size: 0.92rem;
+    line-height: 1.85;
+    color: rgba(255,255,255,0.7);
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+
+  .nyfaf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 28px;
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'Jost', sans-serif;
+    font-weight: 500;
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .nyfaf-btn:hover { background: var(--gold-light); }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin: 64px 64px 0;
+    padding: 28px 0;
+    border-top: 1px solid rgba(15,27,45,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-copy {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+  }
+
+  .laguardia-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .laguardia-icon {
+    width: 32px; height: 32px;
+    background: #cc2936;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.05em;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  /* ── MOBILE ── */
+  .hamburger {
+    display: none;
+    position: fixed;
+    top: 16px; left: 16px;
+    z-index: 200;
+    background: var(--navy);
+    border: 1px solid rgba(201,168,76,0.3);
+    width: 40px; height: 40px;
+    cursor: pointer;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .hamburger span { width: 18px; height: 1px; background: var(--gold); display: block; }
+
+  @media (max-width: 900px) {
+    /* hide topnav, show sidebar on mobile */
+    .topnav { display: none; }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--navy);
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 100;
+      border-right: 1px solid var(--navy-light);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    .sidebar-header {
+      padding: 48px 32px 36px;
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+    .sidebar-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.55rem;
+      color: #fff;
+      line-height: 1.2;
+      letter-spacing: 0.01em;
+      margin-bottom: 10px;
+    }
+    .sidebar-name em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--gold-light);
+    }
+    .sidebar-role {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      line-height: 1.6;
+    }
+    .sidebar-divider {
+      width: 32px; height: 1px;
+      background: var(--gold);
+      margin: 14px 0;
+    }
+    .sidebar nav { padding: 28px 0; flex: 1; }
+    .sidebar nav a {
+      display: block;
+      padding: 11px 32px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: all 0.25s ease;
+      border-left: 2px solid transparent;
+    }
+    .sidebar nav a:hover, .sidebar nav a.active {
+      color: var(--gold-light);
+      border-left-color: var(--gold);
+      background: rgba(201,168,76,0.06);
+      padding-left: 38px;
+    }
+    .sidebar-contact {
+      padding: 28px 32px 36px;
+      border-top: 1px solid rgba(201,168,76,0.2);
+    }
+    .contact-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-bottom: 12px;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.72rem; font-weight: 300;
+      letter-spacing: 0.04em; line-height: 1.4;
+    }
+    .social-row { display: flex; gap: 10px; margin-top: 18px; }
+    .social-btn {
+      width: 30px; height: 30px;
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); text-decoration: none;
+      font-size: 0.65rem; font-weight: 500;
+      transition: all 0.2s;
+    }
+    .social-btn:hover { background: var(--gold); color: var(--navy); }
+
+    .hamburger { display: flex; }
+    .hero { padding: 0 32px 28px; height: 160px; }
+    .hero-name { font-size: 2.6rem; }
+    .page { padding: 40px 32px; }
+    .about-grid { grid-template-columns: 1fr; gap: 32px; }
+    .about-photo-placeholder { aspect-ratio: 3/2; }
+    .two-col, .teaching-body, .activity-card, .activity-card:nth-child(even) { grid-template-columns: 1fr; }
+    .activity-card:nth-child(even) .activity-text, .activity-card:nth-child(even) .activity-img { order: unset; }
+    .nyfaf-hero { grid-template-columns: 1fr; }
+    .pres-photo-row { grid-template-columns: 1fr 1fr; }
+    .footer { flex-direction: column; gap: 12px; text-align: center; margin: 40px 32px 0; }
+  }
 </style>
 </head>
 <body>
+
+<!-- Mobile Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-name">Habiba <em>Boumlik</em><br>Ph.D.</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-role">Professor<br>LaGuardia Community College<br>CUNY</div>
+  </div>
+  <nav>
+    <a href="#" class="active" onclick="showPage('about', this)">About Me</a>
+    <a href="#" onclick="showPage('teaching', this)">Teaching</a>
+    <a href="#" onclick="showPage('publications', this)">Publications</a>
+    <a href="#" onclick="showPage('presentations', this)">Presentations</a>
+    <a href="#" onclick="showPage('activities', this)">Activities</a>
+    <a href="#" onclick="showPage('nyfaf', this)">NYFAF</a>
+  </nav>
+  <div class="sidebar-contact">
+    <div class="contact-item">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .09h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14v2.92z"/></svg>
+      718-482-5160
+    </div>
+    <div class="contact-item">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      hboumlik@lagcc.cuny.edu
+    </div>
+    <div class="contact-item">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Room B-234, LaGuardia CC
+    </div>
+    <div class="social-row">
+      <a href="#" class="social-btn">in</a>
+      <a href="#" class="social-btn">f</a>
+    </div>
+  </div>
+</aside>
+
+<!-- Mobile Hamburger -->
+<button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- Hero (desktop: full width) -->
   <div class="hero">
+    <div class="hero-lines"></div>
     <div class="hero-content">
       <div class="hero-eyebrow">Professor · LaGuardia Community College · CUNY</div>
       <h1 class="hero-name"><strong>Habiba</strong> Boumlik</h1>
     </div>
   </div>
 
-  <nav class="topnav">
-    <a href="#about" class="active">About Me</a>
-    <a href="#teaching">Teaching</a>
-    <a href="#activities">Activities</a>
-    <a href="#nyfaf">NYFAF</a>
+  <!-- Desktop Top Nav (right below hero) -->
+  <nav class="topnav" id="topnav">
+    <a href="#" class="active" onclick="showPage('about', this)">About Me</a>
+    <a href="#" onclick="showPage('teaching', this)">Teaching</a>
+    <a href="#" onclick="showPage('publications', this)">Publications</a>
+    <a href="#" onclick="showPage('presentations', this)">Presentations</a>
+    <a href="#" onclick="showPage('activities', this)">Activities</a>
+    <a href="#" onclick="showPage('nyfaf', this)">NYFAF</a>
   </nav>
 
-  <div id="about" class="page">
+  <!-- ABOUT -->
+  <section class="page active" id="page-about">
     <div class="section-label">Profile</div>
     <h2 class="section-title">About Me</h2>
     <div class="gold-rule"></div>
+
     <div class="about-grid">
-      <img src="images/Prof-Profile.png" alt="Habiba Boumlik" class="img-frame">
+      <div>
+        <div class="about-photo-placeholder">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span style="font-size:0.7rem; letter-spacing:0.1em;">Photo Placeholder</span>
+        </div>
+        <a href="#" class="cv-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          View My CV
+        </a>
+      </div>
       <div class="about-bio">
-        <p>I received my Ph.D. in Social and Cultural Anthropology from the University of Strasbourg, France. My research focuses on Francophone literatures, North African immigration, and Amazigh identity.</p>
-        <p>Prior to joining LaGuardia Community College, I held teaching positions across France, Hungary, and Egypt. My pedagogical approach integrates language acquisition with deep historical and social context.</p>
+        <p>I received my Ph.D. in Social and Cultural Anthropology from the University of Strasbourg, France in 1996. I also hold an M.A. in Arabic and Islamic Studies from the University of Strasbourg and a B.A. in French as a Foreign Language from the University of Besançon, France.</p>
+        <p>My academic background and teaching experience include Arabic, French Language and Francophone Cultures and Literatures, Linguistics, Cultural Anthropology, Women Cross-Culturally, Culture and Society in the West, Middle Eastern History, and MENA (Middle East and North Africa) Cinema.</p>
+        <p>Prior to my current position at LaGuardia, I taught in France, Hungary, Egypt, and in several colleges and universities in New York.</p>
       </div>
     </div>
-  </div>
 
-  <div id="activities" class="page">
-    <div class="section-label">Community</div>
-    <h2 class="section-title">Academic Activities</h2>
+    <div class="two-col">
+      <div>
+        <div class="col-title">Research Interests</div>
+        <div class="research-item">Francophone literatures</div>
+        <div class="research-item">North African immigration to France</div>
+        <div class="research-item">Moroccan Judaism</div>
+        <div class="research-item">Women's rights</div>
+        <div class="research-item">Amazigh/Berber identity</div>
+      </div>
+      <div>
+        <div class="col-title">Education</div>
+        <div class="edu-item">
+          <div class="edu-year">1996</div>
+          <div class="edu-degree">Ph.D. Cultural and Social Anthropology</div>
+          <div class="edu-inst">University of Strasbourg, France</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-year">1990</div>
+          <div class="edu-degree">M.A. Arabic and Islamic Studies</div>
+          <div class="edu-inst">University of Strasbourg, France</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-year">1989</div>
+          <div class="edu-degree">M.A. Cultural and Social Anthropology</div>
+          <div class="edu-inst">University of Strasbourg, France</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-year">1992</div>
+          <div class="edu-degree">B.A. French as a Foreign Language</div>
+          <div class="edu-inst">University of Besançon, France</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer-copy">© 2024 Habiba Boumlik, Ph.D.</div>
+      <div class="laguardia-badge">
+        <div class="laguardia-icon">La<br>G</div>
+        LaGuardia Community College
+      </div>
+    </div>
+  </section>
+
+  <!-- TEACHING -->
+  <section class="page" id="page-teaching">
+    <div class="section-label">Pedagogy</div>
+    <h2 class="section-title">Teaching Philosophy</h2>
+    <div class="gold-rule"></div>
+
+    <div class="teaching-body">
+      <div class="philosophy-text">
+        <p>I conceive my teaching philosophy as a journey through which my students and I embark for one semester. I guide them to overcome obstacles and I cherish the end of their journey where, in language courses for example, they can give presentations, converse in the target language and measure their learning progress.</p>
+        <div class="pullquote">
+          My holistic teaching approach does not separate a language from its social and historical contexts.
+        </div>
+        <p>My goal has always been to bring my students to better understand and to question some implicit cultural assumptions. I strive to promote cross-cultural awareness and appreciation in the diverse courses I have been teaching.</p>
+      </div>
+      <div class="teaching-img">
+        <span style="font-size:0.75rem; letter-spacing:0.1em; text-align:center; padding:20px;">Education &amp;<br>Language Acquisition<br><br><span style="font-size:0.65rem; opacity:0.5;">Image Placeholder</span></span>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer-copy">© 2024 Habiba Boumlik, Ph.D.</div>
+      <div class="laguardia-badge"><div class="laguardia-icon">La<br>G</div>LaGuardia Community College</div>
+    </div>
+  </section>
+
+  <!-- PUBLICATIONS -->
+  <section class="page" id="page-publications">
+    <div class="section-label">Scholarship</div>
+    <h2 class="section-title">Publications</h2>
+    <div class="gold-rule"></div>
+
+    <ul class="pub-list">
+      <li class="pub-item"><span class="pub-num">1</span><div class="pub-text"><span class="pub-title">Addressing extremism through literature: an online cross-cultural conversation on Mahi Binebine's Horses of God.</span> Boumlik, H., &amp; Van Slyck, P. (2019). Ikhtilaf. Journal of Critical Humanities and Social Studies. 1(2), 34–52.</div></li>
+      <li class="pub-item"><span class="pub-num">2</span><div class="pub-text"><span class="pub-title">Teaching the French Revolution at a community college: challenges and benefits.</span> Boumlik, H., &amp; Kietlinski, R. (2019). In J. V. Douthwaite, A. Sol &amp; C. Seth, C. (Eds.), Teaching Representations of the French Revolution. (pp. 87-96). New York: Modern Language Association of America.</div></li>
+      <li class="pub-item"><span class="pub-num">3</span><div class="pub-text"><span class="pub-title">Teaching French to North African soldiers in the French colonial army: Pedagogy and ideology.</span> Boumlik, H. (2019). The French Review, 92(4), 143-156.</div></li>
+      <li class="pub-item"><span class="pub-num">4</span><div class="pub-text"><span class="pub-title">Alternatives to literature courses for highly proficient heritage students: The case of Arabic in a community college.</span> Boumlik, H. (2019). NYS TESOL Journal, 6(1).</div></li>
+      <li class="pub-item"><span class="pub-num">5</span><div class="pub-text"><span class="pub-title">Creating a network between community college students in first-year seminars and in capstone courses using writing assignments.</span> Jaafar, R., Boumlik, H., &amp; Alberts, I. (2018). Cogent Education, 5(1), 1-14.</div></li>
+      <li class="pub-item"><span class="pub-num">6</span><div class="pub-text"><span class="pub-title">Interdisciplinary connections across the curriculum: Fostering collaborations between freshman and capstone students through peer-review assignments.</span> Boumlik, H., Jaafar, R., &amp; Alberts, I. (2018). International Journal of Higher Education, 7(5), 61-74.</div></li>
+      <li class="pub-item"><span class="pub-num">7</span><div class="pub-text"><span class="pub-title">Undergraduate and graduate collaboration: Building ties at both ends of university experience.</span> Boumlik, H., &amp; Van Slyck, P. (2018). 2018 COIL Conference Proceedings (pp. 207-220).</div></li>
+      <li class="pub-item"><span class="pub-num">8</span><div class="pub-text"><span class="pub-title">Morocco's Islamic feminism. Contours of a new theology?</span> Gray, D. H., &amp; Boumlik, H. (2018). In D. H. Gray and N. Sonneveld (Eds.), Women and social change in North Africa (pp. 119-142). Cambridge, UK: Cambridge University Press.</div></li>
+      <li class="pub-item"><span class="pub-num">9</span><div class="pub-text"><span class="pub-title">Female activists in Tunisian socio-political movements: The case of Amira Yahyaoui.</span> Boumlik, H. (2017). In E. Maestri &amp; A. Profanter (Eds.), Arab women and the media in changing landscapes (pp. 245-276). New York: Springer.</div></li>
+      <li class="pub-item"><span class="pub-num">10</span><div class="pub-text"><span class="pub-title">Conscientization and third space: A case study of Tunisian activism.</span> Boumlik, H., &amp; Schwartz, J. (2016). Adult Education Quarterly, 66(4), 303-318.</div></li>
+      <li class="pub-item"><span class="pub-num">11</span><div class="pub-text"><span class="pub-title">Women in STEM: A civic issue with an interdisciplinary approach.</span> Boumlik, H., Alberts, I., &amp; Jaafar, R. (2016, Winter). Science Education and Civic Engagement, 8(1), 66-88.</div></li>
+      <li class="pub-item"><span class="pub-num">12</span><div class="pub-text"><span class="pub-title">Muslim and European encounters through travel writing: 17th–19th centuries.</span> Boumlik, H. (2014). The Maghreb Review, 39(2), 320-347.</div></li>
+      <li class="pub-item"><span class="pub-num">13</span><div class="pub-text"><span class="pub-title">The Igurramn: A Berber religious lineage in Morocco: A minority within a minority.</span> Boumlik, H. (2007). In N. Boudraa &amp; J. Krause (Eds.), North African mosaic: A cultural reappraisal of ethnic and religious minorities (pp. 322-328). Newcastle, UK: Cambridge Scholars Publishing.</div></li>
+    </ul>
+    <div class="footer">
+      <div class="footer-copy">© 2024 Habiba Boumlik, Ph.D.</div>
+      <div class="laguardia-badge"><div class="laguardia-icon">La<br>G</div>LaGuardia Community College</div>
+    </div>
+  </section>
+
+  <!-- PRESENTATIONS -->
+  <section class="page" id="page-presentations">
+    <div class="section-label">Scholarly Exchange</div>
+    <h2 class="section-title">Conference Presentations</h2>
+    <div class="gold-rule"></div>
+
+    <div class="pres-photo-row">
+      <div class="pres-photo"><span>LSE, London 2016</span></div>
+      <div class="pres-photo"><span>MENA Conference</span></div>
+      <div class="pres-photo"><span>International Symposium</span></div>
+    </div>
+
+    <div class="pres-category">International Conferences</div>
+    <ul class="pres-list">
+      <li class="pres-item"><em>Diasporic Amazigh Film: Between Memory, Transmission and Confrontation.</em> Co-presented with L. McNair at Diasporic Reading of Communities in North Africa and the Middle East. The Chaim Herzog Center. Ben-Gurion University, Israel, December 2019.</li>
+      <li class="pres-item"><em>The power of knowledge, the power of symbols: Gender and religious empowerment in Indonesia, Malaysia and India.</em> Power in Southeast Asia Conference, McGill University, Canada, October 2019.</li>
+      <li class="pres-item"><em>Revisioning collective transnational identities: the case of the New York Forum of Amazigh Film.</em> University of Catamarca, Argentina, October 2019.</li>
+      <li class="pres-item"><em>Memory of war and historical memory for Vichy work camps in Tunisia through Albert Memmi's The Pillar of Salt.</em> The Onset of New Order: Europe 1939–1940. University of Warsaw, Poland, September 2019.</li>
+      <li class="pres-item"><em>Amazigh cinema at large: Challenges and hopes.</em> Co-presented with L. McNair at World Congress for Middle Eastern Studies (WOCMES), Seville, Spain, July 2018.</li>
+      <li class="pres-item"><em>Sub-Saharan Immigration in Morocco: Legal and Social challenges.</em> 26th Annual Conference of the Association for the Study of Ethnicity and Nationalism (ASEN), London School of Economics, London, UK, April 2016.</li>
+      <li class="pres-item"><em>Islamic feminism: The contours of a new liberation theology.</em> Workshop Gender, Law and Social Change in North Africa, Al Akhawayn University, Ifrane, Morocco, March 2015.</li>
+      <li class="pres-item"><em>Muslim and European encounters through travel writing: 17th–19th centuries.</em> The Maghreb Studies Association Conference, Mansfield College, Oxford, UK, June 2013.</li>
+    </ul>
+
+    <div class="pres-category">National Conferences</div>
+    <ul class="pres-list">
+      <li class="pres-item"><em>Identity and space in Amazigh/Berber film productions: Site of contestation.</em> Literature/Film Association Conference, New Orleans, LA, December 2018.</li>
+      <li class="pres-item"><em>Community college freshmen and MA students: Students' Reflections on a collaboration on literature and terrorism through a novel.</em> 2018 COIL Conference on Global Learning for All, Fashion Institute of Technology, New York, March 2018.</li>
+      <li class="pres-item"><em>Building an International Studies program in a community college: Pedagogy, resources and challenges.</em> International Studies Association, ISA Northeast Region, 49th Annual Conference, Providence, RI, November 2017.</li>
+      <li class="pres-item"><em>Teaching French to North African soldiers in the French Colonial Army.</em> MESA (Middle East Studies Association) 50th Anniversary Meeting, Boston, MA, November 2016.</li>
+    </ul>
+
+    <div class="pres-category">Regional Conferences</div>
+    <ul class="pres-list">
+      <li class="pres-item"><em>Language museums in the world.</em> World Symposium on Languages Across the Curriculum, LaGuardia Community College, Long Island City, NY, May 2017.</li>
+      <li class="pres-item"><em>How do languages contribute to cultural competency in a global world understood as Anglophone?</em> CUNY Faculty Diversity and Inclusion Conference, CUNY Graduate Center, New York, March 2017.</li>
+      <li class="pres-item"><em>Being female, black and activist in Martinique: The Life and Legacy of Ghislaine Joachim Arnaud.</em> 19th Annual Women's Conference, Sarah Lawrence College, Bronxville, NY, March 2017.</li>
+      <li class="pres-item"><em>Developing frameworks for cultural knowledge in world language study.</em> Co-presented with L. Ramos, E. Kuhn-Osius, &amp; F. Salek at NECTFL, New York, February 2016.</li>
+    </ul>
+    <div class="footer">
+      <div class="footer-copy">© 2024 Habiba Boumlik, Ph.D.</div>
+      <div class="laguardia-badge"><div class="laguardia-icon">La<br>G</div>LaGuardia Community College</div>
+    </div>
+  </section>
+
+  <!-- ACTIVITIES -->
+  <section class="page" id="page-activities">
+    <div class="section-label">Community Engagement</div>
+    <h2 class="section-title">Activities</h2>
     <div class="gold-rule"></div>
 
     <div class="activity-card">
       <div class="activity-text">
-        <h3 class="activity-title">Modern Language & Career Fairs</h3>
-        <p>I organize annual events that showcase the professional and personal value of multilingualism, connecting students with global industry perspectives.</p>
+        <div class="activity-title">The Modern Language Fair</div>
+        <p>Organized in the fall semester, the MLF aims to broaden understanding of language study while informing students about modern language &amp; literature courses.</p>
+        <a href="https://youtu.be/2Cll6Daxibo" class="activity-link" target="_blank">Watch on LaGuardia ↗</a>
       </div>
-      <img src="images/prof-activies-img01.png" alt="Language Fair" class="img-frame">
+      <div class="activity-img"><span>Modern Language Fair</span></div>
     </div>
 
     <div class="activity-card">
       <div class="activity-text">
-        <h3 class="activity-title">Cultural Heritage</h3>
-        <p>Through forums and performances, we celebrate the linguistic and cultural traditions that define the rich diversity of our academic community.</p>
+        <div class="activity-title">The Language Career Fair</div>
+        <p>The Language Career Fair further explores options for students and brings awareness about the importance of languages in the job market. Guest participants hail from publishing, health, business, tourism &amp; hospitality, interpreting, law, education, and finance, from large and small corporations and from institutions such as the UN.</p>
       </div>
-      <img src="images/prof-activies-img03.png" alt="Heritage Event" class="img-frame">
+      <div class="activity-img"><span>Language Career Fair</span></div>
     </div>
-  </div>
 
-  <footer>
-    <div>© 2024 Habiba Boumlik, Ph.D.</div>
-    <div>LaGuardia Community College · CUNY</div>
-  </footer>
+    <div class="activity-card">
+      <div class="activity-text">
+        <div class="activity-title">The International Mother Language Day</div>
+        <p>The International Mother Language Day has been celebrated by the United Nations since 2000. The goal of the IMLD is to celebrate the rich diversity of LaGuardia. As languages are the most powerful instruments of preserving and developing our heritage, by promoting mother tongues, we develop awareness of linguistic and cultural traditions in the college community.</p>
+      </div>
+      <div class="activity-img"><span>International Mother Language Day</span></div>
+    </div>
+
+    <div class="activity-card">
+      <div class="activity-text">
+        <div class="activity-title">Marseille Study Abroad Program <span style="font-size:0.8rem; color:var(--text-muted);">(June–July 2017)</span></div>
+        <p>I co-led this program with my friend and colleague Lucy McNair (English department). Combining a one-week intensive course at LaGuardia and a two-week stay in Marseille, participants studied the city as a "contact zone" through the lens of French literature in translation and creative nonfiction as they explored the city's institutions and neighborhoods.</p>
+      </div>
+      <div class="activity-img"><span>Marseille Study Abroad</span></div>
+    </div>
+
+    <div class="activity-card">
+      <div class="activity-text">
+        <div class="activity-title">African Heritage Celebration with Mookie Wilson <span style="font-size:0.8rem; color:var(--text-muted);">(May 2014)</span></div>
+        <p>I invited the New York Mets World Series Hero Mookie Wilson to speak about "Sports and Race in America" and I moderated a Q&amp;A with Mr. Wilson on the lack of involvement of African Americans in baseball compared to the past, as well as on the prevalence of stereotypes and prejudice against Blacks in baseball.</p>
+      </div>
+      <div class="activity-img"><span>African Heritage Celebration</span></div>
+    </div>
+
+    <div class="activity-card">
+      <div class="activity-text">
+        <div class="activity-title">Heritage Language Scholars, Henry Luce Foundation <span style="font-size:0.8rem; color:var(--text-muted);">(2014–2015)</span></div>
+        <p>The HLS was a year-long program designed to enhance language proficiency and global competencies of selected students. The program aimed to develop leadership skills through weekly seminars; develop participants' heritage language and cultural knowledge; and link HL skills, academic and career opportunities through summer internships overseas or in the U.S.</p>
+      </div>
+      <div class="activity-img"><span>Heritage Language Scholars</span></div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-copy">© 2024 Habiba Boumlik, Ph.D.</div>
+      <div class="laguardia-badge"><div class="laguardia-icon">La<br>G</div>LaGuardia Community College</div>
+    </div>
+  </section>
+
+  <!-- NYFAF -->
+  <section class="page" id="page-nyfaf">
+    <div class="section-label">Film & Culture</div>
+    <h2 class="section-title">New York Forum of Amazigh Film</h2>
+    <div class="gold-rule"></div>
+
+    <div class="nyfaf-hero">
+      <div class="nyfaf-logo-placeholder">
+        <div class="nyfaf-logo-text">NYFAF</div>
+        <div class="nyfaf-logo-sub">New York Forum<br>of Amazigh Film</div>
+      </div>
+      <div class="nyfaf-info">
+        <p>The annual New York Forum of Amazigh Film (NYFAF) is a showcase of contemporary feature, documentary, and short films about the Amazigh people of North Africa and in the diaspora.</p>
+        <p>NYFAF's mission is to create a space where the filmmakers, artists, and scholars of indigenous Amazigh identity and culture can gather yearly to share their knowledge and enthusiasm while fostering dialogue with a diverse audience of students and thinkers gathered from across New York City and the world.</p>
+        <p>Through pre- and post-screening Q&As, live performances, and exhibitions of art and artifacts, the New York Forum of Amazigh Film seeks to disseminate Amazigh cinema and promote an understanding of the unique history, culture, and language of Amazigh peoples in North Africa and in the diaspora.</p>
+        <a href="#" class="nyfaf-btn">Check It Out ↗</a>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer-copy">© 2024 Habiba Boumlik, Ph.D.</div>
+      <div class="laguardia-badge"><div class="laguardia-icon">La<br>G</div>LaGuardia Community College</div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  function showPage(id, el) {
+    event.preventDefault();
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.topnav a, .sidebar nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    // activate matching links in both navs
+    document.querySelectorAll('.topnav a, .sidebar nav a').forEach(a => {
+      if (a.getAttribute('onclick') === el.getAttribute('onclick')) a.classList.add('active');
+    });
+    if (window.innerWidth <= 900) toggleSidebar();
+    window.scrollTo(0, 0);
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+</script>
 </body>
 </html>
